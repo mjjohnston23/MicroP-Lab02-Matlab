@@ -8,6 +8,10 @@
 %of 15 seconds.  We will also introduce Gaussian white noise to this
 %pattern using the  awgn() function.
 
+%We will play around with the filter depth.  If it's too small, the
+%filtered signal will be noisy, but if it's too large, there will be major
+%lag in the filtered output.
+
 samplingFreq = 20; %in Hertz
 
 heatTime = 10;
@@ -32,14 +36,11 @@ end
 for i = stepsHeat+stepsStable+1:stepsHeat+stepsStable+stepsCool 
    temp(i) = (endTemp - stableTemp)/(stepsCool)*(i-(stepsHeat+stepsStable+1)) + stableTemp;
 end
-noisyTemp = awgn(temp, 5);
+noisyTemp = awgn(temp, 5); %SNR = 5, makes the setup interesting
 
 temp = int32(noisyTemp); %cast as integer
 
-
-
-
-filterDepth = 30;
+filterDepth = 30; %play with this figure
 
 filter = zeros(filterDepth, 1);
 filterResult = 1:(samplingFreq*(heatTime + stableTime + coolTime));
@@ -51,6 +52,8 @@ for i = 1:(samplingFreq*(heatTime + stableTime + coolTime))
     filter(1) = temp(i);
     filterResult(i) = mean(filter);
 end
+
+%plot unfiltered and filtered
 subplot(2,1,1)
 plot(temp)
 subplot(2,1,2)

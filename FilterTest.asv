@@ -32,24 +32,27 @@ end
 for i = stepsHeat+stepsStable+1:stepsHeat+stepsStable+stepsCool 
    temp(i) = (endTemp - stableTemp)/(stepsCool)*(i-(stepsHeat+stepsStable+1)) + stableTemp;
 end
-noisyTemp = awgn(temp, 5);
+noisyTemp = awgn(temp, 5); %SNR = 5, makes the setup interesting
 
 temp = int32(noisyTemp); %cast as integer
 
-plot(temp)
 
 
-filterDepth = 10;
+
+filterDepth = 30;
 
 filter = zeros(filterDepth, 1);
 filterResult = 1:(samplingFreq*(heatTime + stableTime + coolTime));
 
 for i = 1:(samplingFreq*(heatTime + stableTime + coolTime))
-    for j = filterDepth:2
+    for j = filterDepth:-1:2
         filter(j) = filter(j-1);
     end
     filter(1) = temp(i);
-    filter
+    filterResult(i) = mean(filter);
 end
-
+subplot(2,1,1)
+plot(temp)
+subplot(2,1,2)
+plot(filterResult)
 
