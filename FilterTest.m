@@ -14,38 +14,40 @@
 
 samplingFreq = 20; %in Hertz
 
-heatTime = 10;
-stableTime = 5;
-coolTime = 15;
-startTemp = 20;
-stableTemp = 40;
-endTemp = 20;
-
-stepsHeat = samplingFreq*heatTime;
-stepsStable = samplingFreq*stableTime;
-stepsCool = samplingFreq*coolTime;
-
-temp = 1:(samplingFreq*(heatTime + stableTime + coolTime));
-
-for i = 1:stepsHeat
-    temp(i) = (stableTemp - startTemp)/(stepsHeat)*i + startTemp;
-end
-for i = stepsHeat+1:stepsHeat+stepsStable
-    temp(i) = stableTemp;
-end
-for i = stepsHeat+stepsStable+1:stepsHeat+stepsStable+stepsCool 
-   temp(i) = (endTemp - stableTemp)/(stepsCool)*(i-(stepsHeat+stepsStable+1)) + stableTemp;
-end
-noisyTemp = awgn(temp, 5); %SNR = 5, makes the setup interesting
-
-temp = int32(noisyTemp); %cast as integer
+% heatTime = 10;
+% stableTime = 5;
+% coolTime = 15;
+% startTemp = 20;
+% stableTemp = 40;
+% endTemp = 20;
+% 
+% stepsHeat = samplingFreq*heatTime;
+% stepsStable = samplingFreq*stableTime;
+% stepsCool = samplingFreq*coolTime;
+% 
+% temp = 1:(samplingFreq*(heatTime + stableTime + coolTime));
+% 
+% for i = 1:stepsHeat
+%     temp(i) = (stableTemp - startTemp)/(stepsHeat)*i + startTemp;
+% end
+% for i = stepsHeat+1:stepsHeat+stepsStable
+%     temp(i) = stableTemp;
+% end
+% for i = stepsHeat+stepsStable+1:stepsHeat+stepsStable+stepsCool 
+%    temp(i) = (endTemp - stableTemp)/(stepsCool)*(i-(stepsHeat+stepsStable+1)) + stableTemp;
+% end
+% noisyTemp = awgn(temp, 5); %SNR = 5, makes the setup interesting
+% 
+% temp = int32(noisyTemp); %cast as integer
+ 
+ temp = xlsread('tempData.xls', 'A1:A641');
 
 filterDepth = 30; %play with this figure
 
 filter = zeros(filterDepth, 1);
-filterResult = 1:(samplingFreq*(heatTime + stableTime + coolTime));
-
-for i = 1:(samplingFreq*(heatTime + stableTime + coolTime))
+%filterResult = 1:(samplingFreq*(heatTime + stableTime + coolTime));
+filterResult = 1:641;
+for i = 1:(641)
     for j = filterDepth:-1:2
         filter(j) = filter(j-1);
     end
